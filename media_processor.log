@@ -1,0 +1,183 @@
+2025-10-24 01:49:12,518 - INFO - test.py:process_ftp_folders:487 - ============================================================
+2025-10-24 01:49:12,518 - INFO - test.py:process_ftp_folders:488 - Starting media processor
+2025-10-24 01:49:12,518 - INFO - test.py:process_ftp_folders:489 - ============================================================
+2025-10-24 01:49:12,518 - INFO - test.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 01:49:13,203 - INFO - test.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 01:49:13,204 - INFO - test.py:process_ftp_folders:500 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 01:49:13,204 - INFO - test.py:process_ftp_folders:502 - Found 0 folders in FTP location
+2025-10-24 01:49:13,205 - INFO - test.py:process_ftp_folders:556 - ============================================================
+2025-10-24 01:49:13,205 - INFO - test.py:process_ftp_folders:557 - Post-processing phase
+2025-10-24 01:49:13,205 - INFO - test.py:process_ftp_folders:558 - ============================================================
+2025-10-24 01:49:13,205 - INFO - test.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 01:49:13,205 - INFO - test.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 01:49:13,205 - INFO - test.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 01:49:13,206 - WARNING - test.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 01:49:13,206 - INFO - test.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 01:49:13,206 - INFO - test.py:process_ftp_folders:576 - Post-processing 'LAWA_01_WTP'
+2025-10-24 01:49:13,206 - INFO - test.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 01:49:13,351 - INFO - test.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 01:49:13,351 - INFO - test.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 01:49:13,376 - INFO - test.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 01:49:13,376 - INFO - test.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 01:49:13,376 - INFO - test.py:process_ftp_folders:597 - ============================================================
+2025-10-24 01:49:13,376 - INFO - test.py:process_ftp_folders:598 - Summary
+2025-10-24 01:49:13,376 - INFO - test.py:process_ftp_folders:599 - ============================================================
+2025-10-24 01:49:13,376 - INFO - test.py:process_ftp_folders:606 - No folders were processed. Skipping rsync.
+2025-10-24 22:42:54,600 - INFO - test.py:process_ftp_folders:487 - ============================================================
+2025-10-24 22:42:54,601 - INFO - test.py:process_ftp_folders:488 - Starting media processor
+2025-10-24 22:42:54,601 - INFO - test.py:process_ftp_folders:489 - ============================================================
+2025-10-24 22:42:54,601 - INFO - test.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 22:42:55,283 - INFO - test.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 22:42:55,284 - INFO - test.py:process_ftp_folders:500 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 22:42:55,285 - INFO - test.py:process_ftp_folders:502 - Found 0 folders in FTP location
+2025-10-24 22:42:55,285 - INFO - test.py:process_ftp_folders:556 - ============================================================
+2025-10-24 22:42:55,285 - INFO - test.py:process_ftp_folders:557 - Post-processing phase
+2025-10-24 22:42:55,285 - INFO - test.py:process_ftp_folders:558 - ============================================================
+2025-10-24 22:42:55,285 - INFO - test.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 22:42:55,286 - INFO - test.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 22:42:55,286 - INFO - test.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 22:42:55,287 - WARNING - test.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 22:42:55,287 - INFO - test.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 22:42:55,287 - INFO - test.py:process_ftp_folders:576 - Post-processing 'LAWA_01_WTP'
+2025-10-24 22:42:55,287 - INFO - test.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 22:42:55,434 - INFO - test.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 22:42:55,434 - INFO - test.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 22:42:55,457 - INFO - test.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 22:42:55,458 - INFO - test.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 22:42:55,458 - INFO - test.py:process_ftp_folders:597 - ============================================================
+2025-10-24 22:42:55,458 - INFO - test.py:process_ftp_folders:598 - Summary
+2025-10-24 22:42:55,458 - INFO - test.py:process_ftp_folders:599 - ============================================================
+2025-10-24 22:42:55,458 - INFO - test.py:process_ftp_folders:606 - No folders were processed. Skipping rsync.
+2025-10-24 22:50:54,984 - INFO - test.py:process_ftp_folders:487 - ============================================================
+2025-10-24 22:50:54,984 - INFO - test.py:process_ftp_folders:488 - Starting media processor
+2025-10-24 22:50:54,984 - INFO - test.py:process_ftp_folders:489 - ============================================================
+2025-10-24 22:50:54,984 - INFO - test.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 22:50:55,683 - INFO - test.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 22:50:55,684 - INFO - test.py:process_ftp_folders:500 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 22:50:55,684 - INFO - test.py:process_ftp_folders:502 - Found 0 folders in FTP location
+2025-10-24 22:50:55,685 - INFO - test.py:process_ftp_folders:556 - ============================================================
+2025-10-24 22:50:55,685 - INFO - test.py:process_ftp_folders:557 - Post-processing phase
+2025-10-24 22:50:55,685 - INFO - test.py:process_ftp_folders:558 - ============================================================
+2025-10-24 22:50:55,685 - INFO - test.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 22:50:55,685 - INFO - test.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 22:50:55,686 - INFO - test.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 22:50:55,686 - WARNING - test.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 22:50:55,686 - INFO - test.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 22:50:55,686 - INFO - test.py:process_ftp_folders:576 - Post-processing 'LAWA_01_WTP'
+2025-10-24 22:50:55,686 - INFO - test.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 22:50:55,830 - INFO - test.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 22:50:55,831 - INFO - test.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 22:50:55,854 - INFO - test.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 22:50:55,854 - INFO - test.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 22:50:55,854 - INFO - test.py:process_ftp_folders:597 - ============================================================
+2025-10-24 22:50:55,854 - INFO - test.py:process_ftp_folders:598 - Summary
+2025-10-24 22:50:55,854 - INFO - test.py:process_ftp_folders:599 - ============================================================
+2025-10-24 22:50:55,854 - INFO - test.py:process_ftp_folders:606 - No folders were processed. Skipping rsync.
+2025-10-24 22:55:16,668 - INFO - image_processor.py:process_ftp_folders:525 - ============================================================
+2025-10-24 22:55:16,668 - INFO - image_processor.py:process_ftp_folders:526 - Starting media processor
+2025-10-24 22:55:16,668 - INFO - image_processor.py:process_ftp_folders:527 - ============================================================
+2025-10-24 22:55:16,668 - INFO - image_processor.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 22:55:17,668 - INFO - image_processor.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 22:55:17,670 - INFO - image_processor.py:process_ftp_folders:538 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 22:55:17,671 - INFO - image_processor.py:process_ftp_folders:540 - Found 0 folders in FTP location
+2025-10-24 22:55:17,671 - INFO - image_processor.py:process_ftp_folders:594 - ============================================================
+2025-10-24 22:55:17,671 - INFO - image_processor.py:process_ftp_folders:595 - Post-processing phase
+2025-10-24 22:55:17,671 - INFO - image_processor.py:process_ftp_folders:596 - ============================================================
+2025-10-24 22:55:17,671 - INFO - image_processor.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 22:55:17,671 - INFO - image_processor.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 22:55:17,672 - INFO - image_processor.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 22:55:17,672 - WARNING - image_processor.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 22:55:17,672 - INFO - image_processor.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 22:55:17,672 - INFO - image_processor.py:process_ftp_folders:614 - Post-processing 'LAWA_01_WTP'
+2025-10-24 22:55:17,672 - INFO - image_processor.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 22:55:17,827 - INFO - image_processor.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 22:55:17,827 - INFO - image_processor.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 22:55:17,850 - INFO - image_processor.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 22:55:17,850 - INFO - image_processor.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 22:55:17,850 - INFO - image_processor.py:process_ftp_folders:635 - ============================================================
+2025-10-24 22:55:17,850 - INFO - image_processor.py:process_ftp_folders:636 - Updating preset numbers
+2025-10-24 22:55:17,850 - INFO - image_processor.py:process_ftp_folders:637 - ============================================================
+2025-10-24 22:55:17,850 - INFO - image_processor.py:update_preset_numbers:488 - Updating preset numbers based on area_name ordering
+2025-10-24 22:55:17,979 - ERROR - image_processor.py:update_preset_numbers:521 - Error updating preset numbers: 1054 (42S22): Unknown column 's.preset' in 'field list'
+Traceback (most recent call last):
+  File "/home/ubuntu/camera-sensor-media/myenv/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Unknown column 's.preset' in 'field list'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/ubuntu/camera-sensor-media/image_processor.py", line 510, in update_preset_numbers
+    cursor.execute(update_query)
+  File "/home/ubuntu/camera-sensor-media/myenv/lib/python3.12/site-packages/mysql/connector/cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+  File "/home/ubuntu/camera-sensor-media/myenv/lib/python3.12/site-packages/mysql/connector/opentelemetry/context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ubuntu/camera-sensor-media/myenv/lib/python3.12/site-packages/mysql/connector/connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 's.preset' in 'field list'
+2025-10-24 22:55:18,003 - INFO - image_processor.py:process_ftp_folders:645 - ============================================================
+2025-10-24 22:55:18,003 - INFO - image_processor.py:process_ftp_folders:646 - Summary
+2025-10-24 22:55:18,003 - INFO - image_processor.py:process_ftp_folders:647 - ============================================================
+2025-10-24 22:55:18,003 - INFO - image_processor.py:process_ftp_folders:654 - No folders were processed. Skipping rsync.
+2025-10-24 22:56:11,124 - INFO - image_processor.py:process_ftp_folders:525 - ============================================================
+2025-10-24 22:56:11,125 - INFO - image_processor.py:process_ftp_folders:526 - Starting media processor
+2025-10-24 22:56:11,125 - INFO - image_processor.py:process_ftp_folders:527 - ============================================================
+2025-10-24 22:56:11,125 - INFO - image_processor.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 22:56:11,786 - INFO - image_processor.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 22:56:11,787 - INFO - image_processor.py:process_ftp_folders:538 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 22:56:11,788 - INFO - image_processor.py:process_ftp_folders:540 - Found 0 folders in FTP location
+2025-10-24 22:56:11,788 - INFO - image_processor.py:process_ftp_folders:594 - ============================================================
+2025-10-24 22:56:11,788 - INFO - image_processor.py:process_ftp_folders:595 - Post-processing phase
+2025-10-24 22:56:11,788 - INFO - image_processor.py:process_ftp_folders:596 - ============================================================
+2025-10-24 22:56:11,788 - INFO - image_processor.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 22:56:11,788 - INFO - image_processor.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 22:56:11,789 - INFO - image_processor.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 22:56:11,789 - WARNING - image_processor.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 22:56:11,789 - INFO - image_processor.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 22:56:11,789 - INFO - image_processor.py:process_ftp_folders:614 - Post-processing 'LAWA_01_WTP'
+2025-10-24 22:56:11,789 - INFO - image_processor.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 22:56:11,825 - INFO - image_processor.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 22:56:11,825 - INFO - image_processor.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 22:56:11,850 - INFO - image_processor.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 22:56:11,850 - INFO - image_processor.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 22:56:11,850 - INFO - image_processor.py:process_ftp_folders:635 - ============================================================
+2025-10-24 22:56:11,850 - INFO - image_processor.py:process_ftp_folders:636 - Updating preset numbers
+2025-10-24 22:56:11,850 - INFO - image_processor.py:process_ftp_folders:637 - ============================================================
+2025-10-24 22:56:11,850 - INFO - image_processor.py:update_preset_numbers:488 - Updating preset numbers based on area_name ordering
+2025-10-24 22:56:12,834 - INFO - image_processor.py:update_preset_numbers:517 - Updated preset numbers for 846 snapshot records
+2025-10-24 22:56:12,835 - INFO - image_processor.py:process_ftp_folders:645 - ============================================================
+2025-10-24 22:56:12,835 - INFO - image_processor.py:process_ftp_folders:646 - Summary
+2025-10-24 22:56:12,835 - INFO - image_processor.py:process_ftp_folders:647 - ============================================================
+2025-10-24 22:56:12,835 - INFO - image_processor.py:process_ftp_folders:654 - No folders were processed. Skipping rsync.
+2025-10-24 23:06:41,479 - INFO - image_processor.py:process_ftp_folders:525 - ============================================================
+2025-10-24 23:06:41,479 - INFO - image_processor.py:process_ftp_folders:526 - Starting media processor
+2025-10-24 23:06:41,479 - INFO - image_processor.py:process_ftp_folders:527 - ============================================================
+2025-10-24 23:06:41,479 - INFO - image_processor.py:get_camera_data:37 - Fetching camera data from database
+2025-10-24 23:06:42,331 - INFO - image_processor.py:get_camera_data:53 - Fetched 44 camera records
+2025-10-24 23:06:42,332 - INFO - image_processor.py:process_ftp_folders:538 - Checking FTP location: /mnt/disk5/ftpdata/media
+2025-10-24 23:06:42,333 - INFO - image_processor.py:process_ftp_folders:540 - Found 0 folders in FTP location
+2025-10-24 23:06:42,333 - INFO - image_processor.py:process_ftp_folders:594 - ============================================================
+2025-10-24 23:06:42,333 - INFO - image_processor.py:process_ftp_folders:595 - Post-processing phase
+2025-10-24 23:06:42,333 - INFO - image_processor.py:process_ftp_folders:596 - ============================================================
+2025-10-24 23:06:42,333 - INFO - image_processor.py:get_todays_folders:302 - Scanning for folders modified in last 24 hours
+2025-10-24 23:06:42,334 - INFO - image_processor.py:get_todays_folders:311 - Scanning /mnt/disk1/media...
+2025-10-24 23:06:42,334 - INFO - image_processor.py:get_todays_folders:324 - Total folders in /mnt/disk1/media: 1
+2025-10-24 23:06:42,334 - WARNING - image_processor.py:get_todays_folders:308 - Path does not exist: /mnt/disk3/media
+2025-10-24 23:06:42,334 - INFO - image_processor.py:get_todays_folders:326 - Found 1 folders from last 24 hours
+2025-10-24 23:06:42,334 - INFO - image_processor.py:process_ftp_folders:614 - Post-processing 'LAWA_01_WTP'
+2025-10-24 23:06:42,334 - INFO - image_processor.py:create_thumbnails_for_folder:189 - Checking/creating thumbnails for LAWA_01_WTP
+2025-10-24 23:06:42,468 - INFO - image_processor.py:create_thumbnails_for_folder:215 - Thumbnails: 846 total (0 newly created)
+2025-10-24 23:06:42,468 - INFO - image_processor.py:insert_snapshots_to_db:339 - Checking snapshots for device_id: 122
+2025-10-24 23:06:42,491 - INFO - image_processor.py:insert_snapshots_to_db:368 - Last added time in DB: 1760377197000, Max timestamp in folder: 1760377197000
+2025-10-24 23:06:42,491 - INFO - image_processor.py:insert_snapshots_to_db:372 - Skipping - DB is up to date
+2025-10-24 23:06:42,491 - INFO - image_processor.py:process_ftp_folders:635 - ============================================================
+2025-10-24 23:06:42,491 - INFO - image_processor.py:process_ftp_folders:636 - Updating preset numbers
+2025-10-24 23:06:42,491 - INFO - image_processor.py:process_ftp_folders:637 - ============================================================
+2025-10-24 23:06:42,491 - INFO - image_processor.py:update_preset_numbers:488 - Updating preset numbers based on area_name ordering
+2025-10-24 23:06:43,548 - INFO - image_processor.py:update_preset_numbers:517 - Updated preset numbers for 846 snapshot records
+2025-10-24 23:06:43,548 - INFO - image_processor.py:process_ftp_folders:645 - ============================================================
+2025-10-24 23:06:43,548 - INFO - image_processor.py:process_ftp_folders:646 - Summary
+2025-10-24 23:06:43,548 - INFO - image_processor.py:process_ftp_folders:647 - ============================================================
+2025-10-24 23:06:43,548 - INFO - image_processor.py:process_ftp_folders:654 - No folders were processed. Skipping rsync.

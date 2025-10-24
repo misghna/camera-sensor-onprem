@@ -1,0 +1,24 @@
+[Unit]
+Description=Image Server API
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/ubuntu/camera-sensor-media
+Environment="PATH=/home/ubuntu/camera-sensor-media/myenv/bin"
+ExecStart=/home/ubuntu/camera-sensor-media/myenv/bin/python /home/ubuntu/camera-sensor-media/server.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/image-server.log
+StandardError=append:/var/log/image-server-error.log
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
