@@ -3442,3 +3442,100 @@
 2025-10-24 23:45:28,056 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG (original: 11,682,117 bytes, resized: 86,036 bytes)
 2025-10-24 23:45:28,056 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [24/Oct/2025 23:45:28] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG&device_id=122&token=3fc4a28296ecedc184f37fd1e5352838d6a960d8c7ef4b62619e12478581c3e9&size=640x480 HTTP/1.1" 200 -
 2025-10-24 23:47:16,906 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [24/Oct/2025 23:47:16] "[33mGET / HTTP/1.1[0m" 404 -
+2025-10-25 00:07:11,524 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,524 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,524 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,525 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,525 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,525 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,539 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,540 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:11,737 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,737 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG
+2025-10-25 00:07:11,738 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG
+2025-10-25 00:07:11,750 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,750 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG
+2025-10-25 00:07:11,750 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG
+2025-10-25 00:07:11,779 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,779 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG
+2025-10-25 00:07:11,780 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG
+2025-10-25 00:07:11,782 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,782 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG
+2025-10-25 00:07:11,783 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG
+2025-10-25 00:07:11,792 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,792 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG
+2025-10-25 00:07:11,793 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,793 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG
+2025-10-25 00:07:11,794 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG
+2025-10-25 00:07:11,795 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,796 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:11,796 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG
+2025-10-25 00:07:11,796 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG
+2025-10-25 00:07:11,797 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG
+2025-10-25 00:07:11,800 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG
+2025-10-25 00:07:11,810 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG
+2025-10-25 00:07:11,841 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG (original: 8,039,810 bytes, resized: 63,641 bytes)
+2025-10-25 00:07:11,842 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,896 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG (original: 6,888,112 bytes, resized: 59,686 bytes)
+2025-10-25 00:07:11,897 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,922 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG (original: 11,682,117 bytes, resized: 86,036 bytes)
+2025-10-25 00:07:11,923 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,942 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG (original: 6,763,303 bytes, resized: 60,171 bytes)
+2025-10-25 00:07:11,942 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,948 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG (original: 9,210,709 bytes, resized: 74,213 bytes)
+2025-10-25 00:07:11,948 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,953 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG (original: 9,341,113 bytes, resized: 77,005 bytes)
+2025-10-25 00:07:11,953 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,960 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG (original: 8,356,202 bytes, resized: 65,412 bytes)
+2025-10-25 00:07:11,960 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:11,966 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG (original: 8,014,099 bytes, resized: 68,050 bytes)
+2025-10-25 00:07:11,967 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:11] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,137 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,138 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,138 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,138 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,139 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,139 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,140 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,141 - INFO - server.py:validate_token:118 - Token validated for device 122 (current window)
+2025-10-25 00:07:45,325 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,326 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG
+2025-10-25 00:07:45,326 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG
+2025-10-25 00:07:45,369 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,369 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG
+2025-10-25 00:07:45,370 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG
+2025-10-25 00:07:45,373 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,374 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG
+2025-10-25 00:07:45,374 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG
+2025-10-25 00:07:45,376 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,377 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG
+2025-10-25 00:07:45,377 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG
+2025-10-25 00:07:45,386 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,386 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG
+2025-10-25 00:07:45,386 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG
+2025-10-25 00:07:45,390 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,390 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG
+2025-10-25 00:07:45,390 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG
+2025-10-25 00:07:45,391 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,391 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG
+2025-10-25 00:07:45,398 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG
+2025-10-25 00:07:45,398 - INFO - server.py:get_image:282 - Authenticated request from device 122 (serial: LAWA_01)
+2025-10-25 00:07:45,399 - INFO - server.py:get_image:295 - Decoded URL path: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG
+2025-10-25 00:07:45,401 - INFO - server.py:get_image:343 - Resizing image to 640x480 for device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG
+2025-10-25 00:07:45,419 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG (original: 8,356,202 bytes, resized: 65,412 bytes)
+2025-10-25 00:07:45,426 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_S/1760351002000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,494 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG (original: 9,341,113 bytes, resized: 77,005 bytes)
+2025-10-25 00:07:45,497 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdNorthbound_SW/1760373574000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,522 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG (original: 8,014,099 bytes, resized: 68,050 bytes)
+2025-10-25 00:07:45,522 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdSouthbound_NE/1760371841000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,528 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG (original: 8,039,810 bytes, resized: 63,641 bytes)
+2025-10-25 00:07:45,529 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_Blvd_Northside_E/1760374469000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,531 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG (original: 6,763,303 bytes, resized: 60,171 bytes)
+2025-10-25 00:07:45,531 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Century_BlvdNorthside_W/1760375617000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,538 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG (original: 6,888,112 bytes, resized: 59,686 bytes)
+2025-10-25 00:07:45,538 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_SepulvedaBlvd_Westside_N/1760358316000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,545 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG (original: 11,682,117 bytes, resized: 86,036 bytes)
+2025-10-25 00:07:45,547 - INFO - server.py:get_image:347 - Serving resized image to device 122: /mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG (original: 9,210,709 bytes, resized: 74,213 bytes)
+2025-10-25 00:07:45,547 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_BlvdEastside_N/1760376837000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:07:45,548 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:07:45] "GET /image?path=/mnt/disk1/media/LAWA_01_WTP/LAWA_01_Sepulveda_Blvd_Eastside_S/1760368238000.JPG&device_id=122&token=b0a8c1dfb8bf49ccb7c3fabb2d339ebdeb10c099dbd3a92fe25a509f268e4598&size=640x480 HTTP/1.1" 200 -
+2025-10-25 00:15:16,831 - INFO - _internal.py:_log:97 - 192.168.0.200 - - [25/Oct/2025 00:15:16] "[33mGET / HTTP/1.1[0m" 404 -
