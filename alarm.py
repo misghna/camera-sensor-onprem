@@ -21,8 +21,14 @@ def get_db_connection():
 def send_slack_alert(message: str) -> bool:
     config = get_config()
     webhook_url = config.get('slack', 'webhook_url')
-    response = requests.post(webhook_url, json={"text": message}, timeout=10)
-    return response.status_code == 200
+    
+    try:
+        response = requests.post(webhook_url, json={"text": message}, timeout=10)
+        print(f"Slack response: {response.status_code} - {response.text}")
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Slack error: {e}")
+        return False
 
 def check_and_insert_new_alarms():
     """Insert new alarms for overdue devices."""
