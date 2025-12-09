@@ -1,5 +1,7 @@
 import requests
 import mysql.connector
+import json
+import os
 from datetime import datetime
 from configparser import ConfigParser
 
@@ -131,7 +133,6 @@ def check_and_resolve_alarms():
     LEFT JOIN site s ON c.site_id = s.site_id
     JOIN healthy_devices hd ON da.device_id = hd.device_id
     WHERE da.issue_resolved = FALSE
-      AND da.alarm_type = 'snapshot_missing'
     """
     
     cursor.execute(query)
@@ -284,6 +285,25 @@ def run_alarm_check():
     new_alarms = check_and_insert_new_alarms()
     print(f"Inserted {new_alarms} new alarm(s)")
     
+    # Step 2a: Run analysis script and get alarms directly
+    print(f"\n[{datetime.now()}] Running analysis script...")
+    try:
+        from t4d_analysis_monitor import main as run_t4d_monitor
+        alarms_data = run_t4d_monitor()
+        print("Analysis script completed successfully")
+        
+        # Step 2b: Insert analysis alarms directly from returned data
+        if alarms_data:
+            analysis_alarms = insert_analysis_alarms_from_data(alarms_data)
+            if analysis_alarms > 0:
+                print(f"Inserted {analysis_alarms} new analysis alarm(s)")
+        else:
+            print("No alarms found to insert")
+    except ImportError as e:
+        print(f"Error importing t4d_analysis_monitor: {e}")
+    except Exception as e:
+        print(f"Error running analysis script: {e}")
+    
     # Step 3: Get all pending alerts (new + daily reminders)
     alerts = get_pending_alerts()
     print(f"Found {len(alerts)} alert(s) to send")
@@ -300,6 +320,101 @@ def run_alarm_check():
             print("Failed to send down notification")
     
     print(f"[{datetime.now()}] Alarm check complete.\n")
+
+def insert_analysis_alarms_from_data(alarms):
+    """
+    Insert alarms from provided data into device_alarms table.
+    Only inserts alarms that don't already exist (same device_id, alarm_type, and unresolved).
+    
+    Args:
+        alarms: List of alarm dictionaries
+    
+    Returns:
+        Number of new alarms inserted
+    """
+    if not alarms:
+        print("No alarms provided")
+        return 0
+    
+    try:
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        inserted_count = 0
+        
+        for alarm in alarms:
+            device_id = alarm.get("device_id")
+            alarm_description = alarm.get("alarm_description", "")
+            alarm_type = alarm.get("alarm_type", "")
+            issue_start_time = alarm.get("issue_start_time")
+            last_alarm_sent_time = alarm.get("last_alarm_sent_time")
+            
+            # Skip if required fields are missing
+            if not device_id or not alarm_type or not issue_start_time:
+                continue
+            
+            # Check if alarm already exists (same device_id, alarm_type, and unresolved)
+            check_query = """
+            SELECT id FROM device_alarms 
+            WHERE device_id = %s 
+            AND alarm_type = %s 
+            AND issue_resolved = FALSE
+            """
+            cursor.execute(check_query, (device_id, alarm_type))
+            existing = cursor.fetchone()
+            
+            if existing:
+                # Alarm already exists, skip
+                continue
+            
+            # Insert new alarm
+            insert_query = """
+            INSERT INTO device_alarms (device_id, alarm_description, alarm_type, issue_start_time, last_alarm_sent_time)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            
+            # Parse timestamps if they're strings
+            try:
+                if isinstance(issue_start_time, str):
+                    # Handle ISO format timestamps
+                    if 'T' in issue_start_time:
+                        issue_start_time = datetime.fromisoformat(issue_start_time.replace('Z', '+00:00'))
+                    else:
+                        issue_start_time = datetime.strptime(issue_start_time, "%Y-%m-%d %H:%M:%S")
+                
+                if isinstance(last_alarm_sent_time, str):
+                    if 'T' in last_alarm_sent_time:
+                        last_alarm_sent_time = datetime.fromisoformat(last_alarm_sent_time.replace('Z', '+00:00'))
+                    else:
+                        last_alarm_sent_time = datetime.strptime(last_alarm_sent_time, "%Y-%m-%d %H:%M:%S")
+            except Exception as e:
+                print(f"Error parsing timestamps for device_id {device_id}: {e}")
+                # Use current time as fallback
+                if not isinstance(issue_start_time, datetime):
+                    issue_start_time = datetime.now()
+                if not isinstance(last_alarm_sent_time, datetime):
+                    last_alarm_sent_time = datetime.now()
+            
+            cursor.execute(insert_query, (
+                device_id,
+                alarm_description,
+                alarm_type,
+                issue_start_time,
+                last_alarm_sent_time
+            ))
+            inserted_count += 1
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        print(f"Inserted {inserted_count} new analysis alarm(s)")
+        return inserted_count
+        
+    except Exception as e:
+        print(f"Error inserting analysis alarms: {e}")
+        return 0
 
 if __name__ == "__main__":
     run_alarm_check()
