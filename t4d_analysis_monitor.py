@@ -533,9 +533,14 @@ def check_threshold_violations(analysis_data, device_statuses):
         if min_value is None or max_value is None:
             continue
         
-        # Check each sensor's observations
+        # Check each sensor's observations (only from last 5 days to avoid huge counts)
         for sensor_id, sensor_name, observations in sensors_data:
             for obs in observations:
+                # Only check observations from the last 5 days
+                obs_timestamp = obs.get("FormattedEndDateLocalString") or obs.get("EndDateUTC")
+                if not obs_timestamp or not _is_within_last_n_days(obs_timestamp, days=5):
+                    continue
+                
                 value = obs.get("ConvertedValue")
                 result = _check_if_violates_threshold(value, min_value, max_value, is_symmetrical)
                 
@@ -571,6 +576,11 @@ def check_threshold_violations(analysis_data, device_statuses):
                     if min_value is not None or max_value is not None:
                         for sensor_id, sensor_name, observations in sensors_data:
                             for obs in observations:
+                                # Only check observations from the last 5 days
+                                obs_timestamp = obs.get("FormattedEndDateLocalString") or obs.get("EndDateUTC")
+                                if not obs_timestamp or not _is_within_last_n_days(obs_timestamp, days=5):
+                                    continue
+                                
                                 value = obs.get("ConvertedValue")
                                 result = _check_if_violates_threshold(value, min_value, max_value, False)
                                 
