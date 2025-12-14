@@ -2,6 +2,7 @@ import requests
 import pickle
 import os
 import json
+import re
 from datetime import datetime, timezone, timedelta
 from bs4 import BeautifulSoup
 
@@ -363,7 +364,8 @@ def _create_violation_record(sensor_id, sensor_name, obs, threshold_name, min_va
         "sensor_name": sensor_name,
         "alarm_description": description,
         "alarm_type": "value_exceeded_threshold",
-        "issue_start_time": obs.get("EndDateUTC"),
+        "issue_start_time": obs.get("FormattedEndDateLocalString"),  # Use FormattedEndDateLocalString instead of EndDateUTC
+        "FormattedEndDateLocalString": obs.get("FormattedEndDateLocalString"),  # For date grouping
         "last_alarm_sent_time": datetime.now(timezone.utc).isoformat(),
         "current_value": obs.get("ConvertedValue"),
         "formatted_value": obs.get("FormattedValue"),
@@ -408,8 +410,21 @@ def _is_within_last_n_days(timestamp_str, days=5):
                     timestamp_str_parsed = timestamp_str_parsed.split(".")[0] + "+00:00"
                     timestamp = datetime.fromisoformat(timestamp_str_parsed)
             else:
-                # Handle format like "2025-10-29 16:55:15"
-                timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+                # Try different date formats
+                # Handle format like "2025-10-29 16:55:15" (YYYY-MM-DD)
+                try:
+                    timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+                except ValueError:
+                    # Handle format like "10/25/2025 10:48:45" (MM/DD/YYYY)
+                    try:
+                        timestamp = datetime.strptime(timestamp_str, "%m/%d/%Y %H:%M:%S")
+                    except ValueError:
+                        # Try format like "10/25/2025" (MM/DD/YYYY without time)
+                        try:
+                            timestamp = datetime.strptime(timestamp_str, "%m/%d/%Y")
+                        except ValueError:
+                            # Try format like "2025-10-29" (YYYY-MM-DD without time)
+                            timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d")
                 timestamp = timestamp.replace(tzinfo=timezone.utc)
         else:
             return False
@@ -648,9 +663,11 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
         
         # Get the last observation (most recent)
         last_obs = value_observations[-1]
-        last_obs_time_str = last_obs.get("EndDateUTC")
+        # Use EndDateUTC for time calculations, but FormattedEndDateLocalString for display
+        last_obs_time_str_utc = last_obs.get("EndDateUTC")  # For time calculations
+        last_obs_time_str = last_obs.get("FormattedEndDateLocalString") or last_obs.get("EndDateUTC")  # For display/storage
         
-        if not last_obs_time_str:
+        if not last_obs_time_str_utc:
             device_statuses.append({
                 "sensor_id": sensor_id,
                 "sensor_name": sensor_name,
@@ -661,19 +678,19 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
             })
             continue
         
-        # Parse the last observation timestamp
+        # Parse the last observation timestamp (use UTC for calculations)
         try:
-            # Handle both ISO format and other formats
-            if "T" in last_obs_time_str:
+            # Handle both ISO format and other formats (using UTC string for calculations)
+            if "T" in last_obs_time_str_utc:
                 # Remove Z and add timezone if not present
-                if last_obs_time_str.endswith("Z"):
-                    last_obs_time_str_parsed = last_obs_time_str.replace("Z", "+00:00")
-                elif "+" in last_obs_time_str or last_obs_time_str.count("-") > 2:
+                if last_obs_time_str_utc.endswith("Z"):
+                    last_obs_time_str_parsed = last_obs_time_str_utc.replace("Z", "+00:00")
+                elif "+" in last_obs_time_str_utc or last_obs_time_str_utc.count("-") > 2:
                     # Already has timezone info
-                    last_obs_time_str_parsed = last_obs_time_str
+                    last_obs_time_str_parsed = last_obs_time_str_utc
                 else:
                     # No timezone info, assume UTC
-                    last_obs_time_str_parsed = last_obs_time_str + "+00:00"
+                    last_obs_time_str_parsed = last_obs_time_str_utc + "+00:00"
                 
                 try:
                     last_obs_time = datetime.fromisoformat(last_obs_time_str_parsed)
@@ -686,7 +703,19 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
                 if last_obs_time.tzinfo is None:
                     last_obs_time = last_obs_time.replace(tzinfo=timezone.utc)
             else:
-                last_obs_time = datetime.strptime(last_obs_time_str, "%Y-%m-%d %H:%M:%S")
+                # Try different date formats
+                try:
+                    last_obs_time = datetime.strptime(last_obs_time_str_utc, "%Y-%m-%d %H:%M:%S")
+                except ValueError:
+                    # Try MM/DD/YYYY format
+                    try:
+                        last_obs_time = datetime.strptime(last_obs_time_str_utc, "%m/%d/%Y %H:%M:%S")
+                    except ValueError:
+                        # Try date only formats
+                        try:
+                            last_obs_time = datetime.strptime(last_obs_time_str_utc, "%m/%d/%Y")
+                        except ValueError:
+                            last_obs_time = datetime.strptime(last_obs_time_str_utc, "%Y-%m-%d")
                 last_obs_time = last_obs_time.replace(tzinfo=timezone.utc)
             
             # Calculate time from last observation to current time
@@ -697,20 +726,21 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
             if len(value_observations) >= 2:
                 # Get the second-to-last observation
                 second_last_obs = value_observations[-2]
-                second_last_obs_time_str = second_last_obs.get("EndDateUTC")
+                second_last_obs_time_str_utc = second_last_obs.get("EndDateUTC")  # For calculations
+                second_last_obs_time_str = second_last_obs.get("FormattedEndDateLocalString") or second_last_obs.get("EndDateUTC")  # For display
                 
-                if second_last_obs_time_str:
-                    # Parse second-to-last observation timestamp
-                    if "T" in second_last_obs_time_str:
+                if second_last_obs_time_str_utc:
+                    # Parse second-to-last observation timestamp (using UTC for calculations)
+                    if "T" in second_last_obs_time_str_utc:
                         # Remove Z and add timezone if not present
-                        if second_last_obs_time_str.endswith("Z"):
-                            second_last_obs_time_str_parsed = second_last_obs_time_str.replace("Z", "+00:00")
-                        elif "+" in second_last_obs_time_str or second_last_obs_time_str.count("-") > 2:
+                        if second_last_obs_time_str_utc.endswith("Z"):
+                            second_last_obs_time_str_parsed = second_last_obs_time_str_utc.replace("Z", "+00:00")
+                        elif "+" in second_last_obs_time_str_utc or second_last_obs_time_str_utc.count("-") > 2:
                             # Already has timezone info
-                            second_last_obs_time_str_parsed = second_last_obs_time_str
+                            second_last_obs_time_str_parsed = second_last_obs_time_str_utc
                         else:
                             # No timezone info, assume UTC
-                            second_last_obs_time_str_parsed = second_last_obs_time_str + "+00:00"
+                            second_last_obs_time_str_parsed = second_last_obs_time_str_utc + "+00:00"
                         
                         try:
                             second_last_obs_time = datetime.fromisoformat(second_last_obs_time_str_parsed)
@@ -723,7 +753,19 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
                         if second_last_obs_time.tzinfo is None:
                             second_last_obs_time = second_last_obs_time.replace(tzinfo=timezone.utc)
                     else:
-                        second_last_obs_time = datetime.strptime(second_last_obs_time_str, "%Y-%m-%d %H:%M:%S")
+                        # Try different date formats
+                        try:
+                            second_last_obs_time = datetime.strptime(second_last_obs_time_str_utc, "%Y-%m-%d %H:%M:%S")
+                        except ValueError:
+                            # Try MM/DD/YYYY format
+                            try:
+                                second_last_obs_time = datetime.strptime(second_last_obs_time_str_utc, "%m/%d/%Y %H:%M:%S")
+                            except ValueError:
+                                # Try date only formats
+                                try:
+                                    second_last_obs_time = datetime.strptime(second_last_obs_time_str_utc, "%m/%d/%Y")
+                                except ValueError:
+                                    second_last_obs_time = datetime.strptime(second_last_obs_time_str_utc, "%Y-%m-%d")
                         second_last_obs_time = second_last_obs_time.replace(tzinfo=timezone.utc)
                     
                     # Calculate interval between last 2 observations
@@ -759,7 +801,7 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
                         "interval_between_last_2_obs_hours": round(hours_interval, 2),
                         "last_2_observations": [
                             {
-                                "timestamp": value_observations[-2].get("EndDateUTC"),
+                                "timestamp": second_last_obs.get("FormattedEndDateLocalString") or second_last_obs.get("EndDateUTC"),
                                 "value": value_observations[-2].get("ConvertedValue"),
                                 "formatted_value": value_observations[-2].get("FormattedValue")
                             },
@@ -838,7 +880,7 @@ def check_device_status(analysis_data, fallback_hours_threshold=24):
             if len(value_observations) >= 2:
                 last_2_obs_data = [
                     {
-                        "timestamp": value_observations[-2].get("EndDateUTC"),
+                        "timestamp": value_observations[-2].get("FormattedEndDateLocalString") or value_observations[-2].get("EndDateUTC"),
                         "value": value_observations[-2].get("ConvertedValue"),
                         "formatted_value": value_observations[-2].get("FormattedValue")
                     },
@@ -968,39 +1010,92 @@ def main():
             if device_status:
                 all_device_statuses.append(device_status)
     
-    # Save complete exported data from LoadData API to separate file
-    load_data_file = "load_data_export.json"
-    print(f"\n===== SAVING COMPLETE LOADDATA API EXPORT TO {load_data_file} =====")
+    # Extract chart data: sensors and thresholds
+    print(f"\n===== EXTRACTING CHART DATA (SENSORS AND THRESHOLDS) =====")
+    sensors_data = []  # Flat table format: one row per observation
+    thresholds_data = []  # Flat table format: one row per threshold
     try:
-        # Extract all raw data from LoadData API responses
-        all_load_data = {}
+        
         for pid, project_data in all_data.items():
-            project_load_data = []
+            project_name = project_data.get("project_name")
+            
             for analysis in project_data.get("analyses", []):
                 analysis_id = analysis.get("id")
                 analysis_name = analysis.get("name")
-                raw_data = analysis.get("data")  # This is the complete response from LoadData API
-                if raw_data:
-                    project_load_data.append({
-                        "analysis_id": analysis_id,
-                        "analysis_name": analysis_name,
-                        "load_data_response": raw_data
-                    })
-            if project_load_data:
-                all_load_data[pid] = {
-                    "project_id": pid,
-                    "project_name": project_data.get("project_name"),
-                    "analyses": project_load_data
-                }
+                raw_data = analysis.get("data")
+                
+                if not raw_data:
+                    continue
+                
+                data = raw_data.get("data", {})
+                if not data:
+                    continue
+                
+                # Extract thresholds (PlotBands) - flat table format
+                plot_bands = data.get("PlotBands", [])
+                for plot_band in plot_bands:
+                    min_val = plot_band.get("ConvertedFromValue") or plot_band.get("FromValue")
+                    max_val = plot_band.get("ConvertedToValue") or plot_band.get("ToValue")
+                    if min_val is not None or max_val is not None:
+                        threshold_row = {
+                            "project_id": pid,
+                            "device_id": analysis_id,
+                            "threshold_name": plot_band.get("Name", "Threshold"),
+                            "min_value": min_val,
+                            "max_value": max_val
+                        }
+                        thresholds_data.append(threshold_row)
+                
+                # Extract YLimits if no PlotBands
+                if not plot_bands:
+                    y_limits_json = data.get("YLimitsJSON")
+                    if y_limits_json:
+                        try:
+                            y_limits = json.loads(y_limits_json)
+                            if isinstance(y_limits, list) and y_limits:
+                                y_limit = y_limits[0]
+                                min_val = y_limit.get("min")
+                                max_val = y_limit.get("max")
+                                if min_val is not None or max_val is not None:
+                                    threshold_row = {
+                                        "project_id": pid,
+                                        "device_id": analysis_id,
+                                        "threshold_name": "Y-Limit",
+                                        "min_value": min_val,
+                                        "max_value": max_val
+                                    }
+                                    thresholds_data.append(threshold_row)
+                        except Exception as e:
+                            debug_print(f"Error parsing YLimitsJSON: {e}")
+                
+                # Extract sensor time series data - flat table format
+                series_list = data.get("Series", [])
+                for series in series_list:
+                    sensor_obs = series.get("SensorValueObservations")
+                    if not sensor_obs:
+                        continue
+                    
+                    sensor_id = sensor_obs.get("SensorID")
+                    sensor_name = sensor_obs.get("SensorName", f"Sensor-{sensor_id}")
+                    observations = sensor_obs.get("ValueObservations", [])
+                    
+                    # Create one row per observation
+                    for obs in observations:
+                        sensor_row = {
+                            "project_id": pid,
+                            "project_name": project_name,
+                            "device_id": analysis_id,
+                            "device_name": analysis_name,
+                            "sensor_id": sensor_id,
+                            "sensor_name": sensor_name,
+                            "timestamp": obs.get("FormattedEndDateLocalString") or obs.get("EndDateUTC"),
+                            "value": obs.get("ConvertedValue")
+                        }
+                        sensors_data.append(sensor_row)
         
-        with open(load_data_file, "w", encoding="utf-8") as f:
-            json.dump(all_load_data, f, indent=2, default=str, ensure_ascii=False)
-        
-        total_analyses = sum(len(proj.get("analyses", [])) for proj in all_load_data.values())
-        print(f"Successfully saved complete LoadData API export to {load_data_file}")
-        print(f"Total analyses with data: {total_analyses}")
+        print(f"Extracted {len(sensors_data)} sensor observation records and {len(thresholds_data)} threshold records")
     except Exception as e:
-        print(f"Error saving LoadData API export to JSON file: {e}")
+        print(f"Error extracting chart data: {e}")
     
     # Collect all down devices and threshold violations, save in alarm format
     # Only include alarms from the last 5 days
@@ -1030,49 +1125,82 @@ def main():
     down_devices_alarms.extend(all_threshold_violations)
     
     # Collect down devices (only those that went down within last 5 days)
+    # Check if all sensors are down (device down) vs only some sensors down
     for device_status in all_device_statuses:
         analysis_id = device_status.get("analysis_id")
         analysis_name = device_status.get("analysis_name", "").strip()
+        all_devices = device_status.get("devices", [])
         
-        for device in device_status.get("devices", []):
+        # Filter devices that are down and within the last 5 days
+        down_sensors = []
+        for device in all_devices:
             if device.get("status") == "down":
-                # issue_start_time is when the device last sent data (last observation time)
                 issue_start_time = device.get("last_observation_time") or device.get("last_observation")
                 
                 # Only include if the device went down within the last 5 days
-                if not issue_start_time or not _is_within_last_n_days(issue_start_time, days=DAYS_THRESHOLD):
-                    continue
-                
-                # Format device_id (use sensor_id or sensor_name)
-                device_id = device.get("sensor_id") or device.get("sensor_name", "unknown")
-                
-                # Create alarm_description from reason
-                alarm_description = device.get("reason", "Device is down")
-                
-                # Set alarm_type
-                alarm_type = "sensor_down"
-                
-                # last_alarm_sent_time is current time (when we're checking)
-                last_alarm_sent_time = current_time.isoformat()
+                if issue_start_time and _is_within_last_n_days(issue_start_time, days=DAYS_THRESHOLD):
+                    down_sensors.append(device)
+        
+        # Check if all sensors in this analysis are down
+        total_sensors = len(all_devices)
+        down_sensors_count = len(down_sensors)
+        
+        if down_sensors_count == 0:
+            # No down sensors, skip
+            continue
+        
+        # If all sensors are down, create a device_down alarm
+        if down_sensors_count == total_sensors and total_sensors > 0:
+            # All sensors are down - device is down
+            # Get earliest issue_start_time from all down sensors
+            issue_times = []
+            sensor_details = []
+            for sensor in down_sensors:
+                issue_time = sensor.get("last_observation_time") or sensor.get("last_observation")
+                if issue_time:
+                    issue_times.append(str(issue_time))
+                sensor_id = sensor.get("sensor_id") or sensor.get("sensor_name", "unknown")
+                sensor_name = sensor.get("sensor_name", f"Sensor-{sensor_id}")
+                sensor_details.append(f"  Sensor ID {sensor_id} ({sensor_name}): {sensor.get('reason', 'Device is down')}")
+            
+            device_issue_start_time = min(issue_times) if issue_times else current_time.isoformat()
+            device_description = f"Device is down:\n" + "\n".join(sensor_details)
+            
+            down_devices_alarms.append({
+                "device_id": analysis_id,  # Use analysis_id as device_id when all sensors are down
+                "alarm_description": device_description,
+                "alarm_type": "device_down",
+                "issue_start_time": device_issue_start_time,
+                "last_alarm_sent_time": current_time.isoformat(),
+                "analysis_id": analysis_id,
+                "analysis_name": analysis_name
+            })
+        else:
+            # Only some sensors are down - create sensor_down alarms for individual sensors
+            for sensor in down_sensors:
+                issue_start_time = sensor.get("last_observation_time") or sensor.get("last_observation")
+                sensor_id = sensor.get("sensor_id") or sensor.get("sensor_name", "unknown")
+                alarm_description = sensor.get("reason", "Sensor is down")
                 
                 down_devices_alarms.append({
-                    "device_id": device_id,
+                    "device_id": sensor_id,  # Use sensor_id for individual sensor alarms
                     "alarm_description": alarm_description,
-                    "alarm_type": alarm_type,
+                    "alarm_type": "sensor_down",
                     "issue_start_time": issue_start_time,
-                    "last_alarm_sent_time": last_alarm_sent_time,
-                    "sensor_name": device.get("sensor_name"),
+                    "last_alarm_sent_time": current_time.isoformat(),
+                    "sensor_name": sensor.get("sensor_name"),
                     "analysis_id": analysis_id,
                     "analysis_name": analysis_name,
-                    "hours_since_last": device.get("hours_since_last"),
-                    "interval_between_last_2_obs_hours": device.get("interval_between_last_2_obs_hours")
+                    "hours_since_last": sensor.get("hours_since_last"),
+                    "interval_between_last_2_obs_hours": sensor.get("interval_between_last_2_obs_hours")
                 })
     
     # Print summary of collected alarms
     if down_devices_alarms:
-        down_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "sensor_down")
+        device_down_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "device_down")
+        sensor_down_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "sensor_down")
         threshold_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "value_exceeded_threshold")
-        print(f"\nFound {down_count} down device(s) and {threshold_count} threshold violation(s) (from last {DAYS_THRESHOLD} days)")
+        print(f"\nFound {device_down_count} device(s) down, {sensor_down_count} sensor(s) down, and {threshold_count} threshold violation(s) (from last {DAYS_THRESHOLD} days)")
     else:
         print("No down devices or threshold violations found.")
     
@@ -1080,123 +1208,207 @@ def main():
     # Only includes alarms from the last 5 days
     print(f"\n===== PROCESSING ALL ALARMS (GROUPED BY ANALYSIS_ID, LAST {DAYS_THRESHOLD} DAYS) =====")
     try:
-        # Group alarms by analysis_id
-        alarms_by_analysis = {}
+        # Group all alarms by: device_id (analysis_id) and alarm_type only
+        # Key format: (analysis_id, alarm_type)
+        alarms_by_group = {}
         
         for alarm in down_devices_alarms:
+            alarm_type = alarm.get("alarm_type")
             analysis_id = alarm.get("analysis_id")
+            
             if not analysis_id:
                 continue
             
-            if analysis_id not in alarms_by_analysis:
-                alarms_by_analysis[analysis_id] = {
-                    "analysis_id": analysis_id,
+            # Create grouping key: (analysis_id, alarm_type) only
+            group_key = (analysis_id, alarm_type)
+            
+            if group_key not in alarms_by_group:
+                alarms_by_group[group_key] = {
+                    "device_id": analysis_id,  # Always use analysis_id as device_id
+                    "alarm_type": alarm_type,
                     "analysis_name": alarm.get("analysis_name", ""),
-                    "threshold_violations": [],
-                    "down_sensors": []
+                    "alarms": []
                 }
             
-            alarm_type = alarm.get("alarm_type")
-            sensor_id = alarm.get("device_id")  # This is the sensor_id
-            sensor_name = alarm.get("sensor_name", f"Sensor-{sensor_id}")
-            description = alarm.get("alarm_description", "")
-            
-            if alarm_type == "value_exceeded_threshold":
-                alarms_by_analysis[analysis_id]["threshold_violations"].append({
-                    "sensor_id": sensor_id,
-                    "sensor_name": sensor_name,
-                    "message": description,
-                    "issue_start_time": alarm.get("issue_start_time"),
-                    "current_value": alarm.get("current_value"),
-                    "formatted_value": alarm.get("formatted_value")
-                })
-            elif alarm_type == "sensor_down":
-                alarms_by_analysis[analysis_id]["down_sensors"].append({
-                    "sensor_id": sensor_id,
-                    "sensor_name": sensor_name,
-                    "message": description,
-                    "issue_start_time": alarm.get("issue_start_time"),
-                    "hours_since_last": alarm.get("hours_since_last")
-                })
+            # Store the alarm data
+            alarms_by_group[group_key]["alarms"].append(alarm)
         
-        # Create final alarm records grouped by analysis_id and separated by alarm_type
+        # Create final alarm records grouped by (analysis_id, alarm_type, date)
         grouped_alarms = []
-        for analysis_id, alarm_data in alarms_by_analysis.items():
-            # Create separate entry for threshold violations
-            if alarm_data["threshold_violations"]:
-                description_parts = []
-                description_parts.append("THRESHOLD VIOLATIONS:")
-                for violation in alarm_data["threshold_violations"]:
-                    sensor_id = violation.get("sensor_id")
-                    sensor_name = violation.get("sensor_name")
-                    message = violation.get("message", "")
-                    description_parts.append(f"  Sensor ID {sensor_id} ({sensor_name}): {message}")
-                
-                threshold_description = "\n".join(description_parts)
-                
-                # Get earliest issue_start_time for threshold violations
-                threshold_issue_times = []
-                for violation in alarm_data["threshold_violations"]:
-                    issue_time = violation.get("issue_start_time")
-                    if issue_time:
-                        threshold_issue_times.append(str(issue_time))
-                
-                threshold_issue_start_time = min(threshold_issue_times) if threshold_issue_times else current_time.isoformat()
-                
-                grouped_alarms.append({
-                    "device_id": analysis_id,  # Use analysis_id as device_id
-                    "alarm_description": threshold_description,
-                    "alarm_type": "value_exceeded_threshold",
-                    "issue_start_time": threshold_issue_start_time,
-                    "last_alarm_sent_time": current_time.isoformat()
-                })
+        
+        for (analysis_id, alarm_type), group_data in alarms_by_group.items():
+            alarms_in_group = group_data["alarms"]
+            analysis_name = group_data.get("analysis_name", "")
             
-            # Create separate entry for down sensors
-            if alarm_data["down_sensors"]:
-                description_parts = []
-                description_parts.append("DOWN SENSORS:")
-                for sensor in alarm_data["down_sensors"]:
-                    sensor_id = sensor.get("sensor_id")
-                    sensor_name = sensor.get("sensor_name")
-                    message = sensor.get("message", "")
-                    description_parts.append(f"  Sensor ID {sensor_id} ({sensor_name}): {message}")
+            if not alarms_in_group:
+                continue
+            
+            # Build description based on alarm type
+            description_parts = []
+            issue_times = []
+            
+            if alarm_type == "device_down":
+                # Device down: all sensors are down
+                # Get sensor details from the first alarm's description
+                if alarms_in_group:
+                    first_alarm_desc = alarms_in_group[0].get("alarm_description", "")
+                    if "Sensor ID" in first_alarm_desc:
+                        # Extract sensor information
+                        sensor_lines = [line.strip() for line in first_alarm_desc.split("\n") if "Sensor ID" in line]
+                        sensor_count = len(sensor_lines)
+                        description_parts.append(f"Device is down - All {sensor_count} sensor(s) are down")
+                        # Add sensor names
+                        for line in sensor_lines[:5]:  # Show first 5 sensors
+                            if "Sensor ID" in line:
+                                # Extract sensor name from line like "Sensor ID 646 (Col-01B): ..."
+                                parts = line.split("(")
+                                if len(parts) > 1:
+                                    sensor_name = parts[1].split(")")[0]
+                                    description_parts.append(f"  - {sensor_name}")
+                        if sensor_count > 5:
+                            description_parts.append(f"  ... and {sensor_count - 5} more sensor(s)")
+                    else:
+                        description_parts.append("Device is down - All sensors are down")
+                else:
+                    description_parts.append("Device is down")
                 
-                down_description = "\n".join(description_parts)
-                
-                # Get earliest issue_start_time for down sensors
-                down_issue_times = []
-                for sensor in alarm_data["down_sensors"]:
-                    issue_time = sensor.get("issue_start_time")
+                # Collect all issue times
+                for alarm_item in alarms_in_group:
+                    issue_time = alarm_item.get("issue_start_time")
                     if issue_time:
-                        down_issue_times.append(str(issue_time))
+                        issue_times.append(str(issue_time))
+            
+            elif alarm_type == "sensor_down":
+                # Sensor down: some sensors are down
+                sensor_count = len(alarms_in_group)
+                description_parts.append(f"{sensor_count} sensor(s) down for this device:")
                 
-                down_issue_start_time = min(down_issue_times) if down_issue_times else current_time.isoformat()
+                for alarm_item in alarms_in_group:
+                    sensor_id = alarm_item.get("device_id")  # This is sensor_id in the original alarm
+                    sensor_name = alarm_item.get("sensor_name", f"Sensor-{sensor_id}")
+                    message = alarm_item.get("alarm_description", "")
+                    # Extract just the key part of the message (time since last observation)
+                    if "Time since last observation" in message:
+                        # Extract the hours part
+                        hours_match = re.search(r'(\d+\.?\d*)\s+hours', message)
+                        if hours_match:
+                            hours = hours_match.group(1)
+                            description_parts.append(f"  - {sensor_name}: Down for {hours} hours")
+                        else:
+                            description_parts.append(f"  - {sensor_name}: {message}")
+                    else:
+                        description_parts.append(f"  - {sensor_name}: {message}")
+                    issue_time = alarm_item.get("issue_start_time")
+                    if issue_time:
+                        issue_times.append(str(issue_time))
+            
+            elif alarm_type == "value_exceeded_threshold":
+                # Threshold violations - clear summary
+                violation_count = len(alarms_in_group)
+                description_parts.append(f"Threshold violations detected: {violation_count} total violation(s)")
                 
-                grouped_alarms.append({
-                    "device_id": analysis_id,  # Use analysis_id as device_id
-                    "alarm_description": down_description,
-                    "alarm_type": "sensor_down",
-                    "issue_start_time": down_issue_start_time,
-                    "last_alarm_sent_time": current_time.isoformat()
-                })
+                # Group violations by threshold name
+                threshold_summary = {}
+                for alarm_item in alarms_in_group:
+                    threshold_name = alarm_item.get("threshold_name", "Unknown")
+                    violation_type = alarm_item.get("violation_type", "")
+                    if threshold_name not in threshold_summary:
+                        threshold_summary[threshold_name] = {"count": 0, "types": set()}
+                    threshold_summary[threshold_name]["count"] += 1
+                    threshold_summary[threshold_name]["types"].add(violation_type)
+                    issue_time = alarm_item.get("issue_start_time")
+                    if issue_time:
+                        issue_times.append(str(issue_time))
+                
+                # Add summary by threshold with violation types
+                description_parts.append("Violations by threshold:")
+                for threshold_name, summary in sorted(threshold_summary.items()):
+                    count = summary["count"]
+                    types = ", ".join(sorted(summary["types"]))
+                    description_parts.append(f"  - {threshold_name}: {count} violation(s) ({types})")
+            
+            alarm_description = "\n".join(description_parts)
+            issue_start_time = min(issue_times) if issue_times else current_time.isoformat()
+            
+            alarm_record = {
+                "device_id": analysis_id,  # Always use analysis_id as device_id
+                "alarm_description": alarm_description,
+                "alarm_type": alarm_type,
+                "issue_start_time": issue_start_time,
+                "last_alarm_sent_time": current_time.isoformat()
+            }
+            
+            grouped_alarms.append(alarm_record)
         
         print(f"Successfully processed {len(grouped_alarms)} alarm record(s)")
+        device_down_entries = 0
+        threshold_entries = 0
+        sensor_down_entries = 0
+        total_threshold = 0
+        total_sensor_down = 0
+        total_device_down = 0
+        
         if grouped_alarms:
-            total_threshold = sum(len(alarm_data["threshold_violations"]) for alarm_data in alarms_by_analysis.values())
-            total_down = sum(len(alarm_data["down_sensors"]) for alarm_data in alarms_by_analysis.values())
+            device_down_entries = sum(1 for a in grouped_alarms if a.get("alarm_type") == "device_down")
             threshold_entries = sum(1 for a in grouped_alarms if a.get("alarm_type") == "value_exceeded_threshold")
-            down_entries = sum(1 for a in grouped_alarms if a.get("alarm_type") == "sensor_down")
-            print(f"  - {len(grouped_alarms)} alarm record(s) (separated by alarm_type)")
+            sensor_down_entries = sum(1 for a in grouped_alarms if a.get("alarm_type") == "sensor_down")
+            
+            # Count total violations and sensors from original alarms
+            for alarm in down_devices_alarms:
+                alarm_type = alarm.get("alarm_type")
+                if alarm_type == "value_exceeded_threshold":
+                    total_threshold += 1
+                elif alarm_type == "sensor_down":
+                    total_sensor_down += 1
+                elif alarm_type == "device_down":
+                    total_device_down += 1
+            
+            print(f"  - {len(grouped_alarms)} alarm record(s) (grouped by device_id, alarm_type, and date)")
+            print(f"  - {device_down_entries} device down entry/entries ({total_device_down} total)")
             print(f"  - {threshold_entries} threshold violation entry/entries ({total_threshold} total violations)")
-            print(f"  - {down_entries} sensor down entry/entries ({total_down} total down sensors)")
-            print(f"  - device_id = analysis_id, alarms separated by alarm_type")
+            print(f"  - {sensor_down_entries} sensor down entry/entries ({total_sensor_down} total down sensors)")
+            print(f"  - All alarms grouped by: device_id (analysis_id), alarm_type, and EndDateLocalString (date)")
         else:
             print("No alarms found")
         
-        return grouped_alarms
+        # Save final alarms to JSON file
+        alarms_file = "alarms_output.json"
+        print(f"\n===== SAVING FINAL ALARMS TO {alarms_file} =====")
+        try:
+            output_data = {
+                "generated_at": current_time.isoformat(),
+                "total_alarms": len(grouped_alarms),
+                "summary": {
+                    "device_down_count": device_down_entries,
+                    "sensor_down_count": sensor_down_entries,
+                    "threshold_violation_count": threshold_entries,
+                    "total_sensors_down": total_sensor_down,
+                    "total_threshold_violations": total_threshold
+                },
+                "alarms": grouped_alarms
+            }
+            
+            with open(alarms_file, "w", encoding="utf-8") as f:
+                json.dump(output_data, f, indent=2, default=str, ensure_ascii=False)
+            
+            print(f"Successfully saved {len(grouped_alarms)} alarm record(s) to {alarms_file}")
+        except Exception as e:
+            print(f"Error saving alarms to JSON file: {e}")
+        
+        return {
+            "alarms": grouped_alarms,
+            "sensors_data": sensors_data,
+            "thresholds_data": thresholds_data
+        }
     except Exception as e:
         print(f"Error processing alarm data: {e}")
-        return []
+        return {
+            "alarms": [],
+            "sensors_data": sensors_data if 'sensors_data' in locals() else [],
+            "thresholds_data": thresholds_data if 'thresholds_data' in locals() else []
+        }
+
+
 
 
 if __name__ == "__main__":

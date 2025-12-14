@@ -289,8 +289,13 @@ def run_alarm_check():
     print(f"\n[{datetime.now()}] Running analysis script...")
     try:
         from t4d_analysis_monitor import main as run_t4d_monitor
-        alarms_data = run_t4d_monitor()
+        result = run_t4d_monitor()
         print("Analysis script completed successfully")
+        
+        # Extract data from result
+        alarms_data = result.get("alarms", []) if isinstance(result, dict) else result
+        sensors_data = result.get("sensors_data", []) if isinstance(result, dict) else []
+        thresholds_data = result.get("thresholds_data", []) if isinstance(result, dict) else []
         
         # Step 2b: Insert analysis alarms directly from returned data
         if alarms_data:
@@ -299,6 +304,11 @@ def run_alarm_check():
                 print(f"Inserted {analysis_alarms} new analysis alarm(s)")
         else:
             print("No alarms found to insert")
+        
+        # Step 2c: Store sensor and threshold data to database
+        if sensors_data or thresholds_data:
+            store_chart_data_to_db(sensors_data=sensors_data, thresholds_data=thresholds_data)
+        
     except ImportError as e:
         print(f"Error importing t4d_analysis_monitor: {e}")
     except Exception as e:
@@ -415,6 +425,143 @@ def insert_analysis_alarms_from_data(alarms):
     except Exception as e:
         print(f"Error inserting analysis alarms: {e}")
         return 0
+
+def store_sensors_data_to_db(sensors_data=None, sensors_file=None):
+    """
+    Store sensors data into MySQL t4d_sensors_data table.
+    Uses ON DUPLICATE KEY UPDATE to update existing records or insert new ones.
+    Requires unique constraint on (project_id, device_id, sensor_id, timestamp).
+    
+    Args:
+        sensors_data: List of sensor data dictionaries (optional, if not provided, reads from file)
+        sensors_file: Path to JSON file (optional, only used if sensors_data is None)
+    
+    Returns:
+        Number of records processed (inserted or updated)
+    """
+    try:
+        # If data not provided, read from file
+        if sensors_data is None:
+            if sensors_file is None:
+                sensors_file = "sensors_data.json"
+            with open(sensors_file, "r", encoding="utf-8") as f:
+                sensors_data = json.load(f)
+        
+        if not sensors_data:
+            return 0
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Use INSERT ... ON DUPLICATE KEY UPDATE
+        # Unique constraint on (project_id, device_id, sensor_id, timestamp)
+        # This safely handles both inserts and updates without deleting data
+        insert_query = """
+        INSERT INTO t4d_sensors_data 
+        (project_id, project_name, device_id, device_name, sensor_id, sensor_name, timestamp, value)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            project_name = VALUES(project_name),
+            device_name = VALUES(device_name),
+            sensor_name = VALUES(sensor_name),
+            timestamp = VALUES(timestamp),
+            value = VALUES(value)
+        """
+        
+        records = [(
+            row.get("project_id"), row.get("project_name", ""), row.get("device_id"),
+            row.get("device_name", ""), row.get("sensor_id"), row.get("sensor_name", ""),
+            row.get("timestamp", ""), row.get("value")
+        ) for row in sensors_data]
+        
+        # Batch insert/update - MySQL handles duplicate detection automatically
+        cursor.executemany(insert_query, records)
+        total_affected = cursor.rowcount
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        print(f"Processed {total_affected} sensor record(s) (inserted or updated)")
+        return total_affected
+    except Exception as e:
+        print(f"Error storing sensors data: {e}")
+        return 0
+
+def store_thresholds_data_to_db(thresholds_data=None, thresholds_file=None):
+    """
+    Store thresholds data into MySQL t4d_thresholds_data table.
+    Updates existing records if they already exist (based on unique constraint).
+    
+    Args:
+        thresholds_data: List of threshold data dictionaries (optional, if not provided, reads from file)
+        thresholds_file: Path to JSON file (optional, only used if thresholds_data is None)
+    
+    Returns:
+        Tuple of (inserted_count, updated_count)
+    """
+    try:
+        # If data not provided, read from file
+        if thresholds_data is None:
+            if thresholds_file is None:
+                thresholds_file = "thresholds_data.json"
+            with open(thresholds_file, "r", encoding="utf-8") as f:
+                thresholds_data = json.load(f)
+        
+        if not thresholds_data:
+            return 0
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Use INSERT ... ON DUPLICATE KEY UPDATE to update existing records
+        insert_query = """
+        INSERT INTO t4d_thresholds_data 
+        (project_id, device_id, threshold_name, min_value, max_value)
+        VALUES (%s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            min_value = VALUES(min_value),
+            max_value = VALUES(max_value)
+        """
+        
+        records = [(
+            row.get("project_id"), row.get("device_id"), row.get("threshold_name", ""),
+            row.get("min_value"), row.get("max_value")
+        ) for row in thresholds_data]
+        
+        # Batch insert/update - MySQL handles duplicate detection automatically
+        cursor.executemany(insert_query, records)
+        total_affected = cursor.rowcount
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        # Note: rowcount includes both inserts and updates, but we can't distinguish them
+        # without additional queries, which would slow things down
+        print(f"Processed {total_affected} threshold record(s) (inserted or updated)")
+        return total_affected
+    except Exception as e:
+        print(f"Error storing thresholds data: {e}")
+        return 0
+
+def store_chart_data_to_db(sensors_data=None, thresholds_data=None, sensors_file=None, thresholds_file=None):
+    """
+    Store both sensors and thresholds data into MySQL tables.
+    
+    Args:
+        sensors_data: List of sensor data dictionaries (optional)
+        thresholds_data: List of threshold data dictionaries (optional)
+        sensors_file: Path to sensors JSON file (optional, only used if sensors_data is None)
+        thresholds_file: Path to thresholds JSON file (optional, only used if thresholds_data is None)
+    
+    Returns:
+        Tuple of (sensors_inserted_count, thresholds_inserted_count)
+    """
+    sensors_count = store_sensors_data_to_db(sensors_data, sensors_file)
+    thresholds_count = store_thresholds_data_to_db(thresholds_data, thresholds_file)
+    print(f"Total: {sensors_count} sensor records, {thresholds_count} threshold records")
+    return (sensors_count, thresholds_count)
 
 if __name__ == "__main__":
     run_alarm_check()
