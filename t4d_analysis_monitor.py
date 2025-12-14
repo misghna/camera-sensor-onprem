@@ -29,6 +29,12 @@ COMMON_HEADERS = {
 # Debug flag - set to True for verbose output
 DEBUG = True
 
+# Time window for alarm detection: "hours" or "days"
+# Use "hours" for production (12 hours), "days" for testing (5 days)
+TIME_WINDOW_MODE = "hours"  # Options: "hours" or "days"
+TIME_WINDOW_HOURS = 12     # Hours to check (when mode is "hours")
+TIME_WINDOW_DAYS = 5      # Days to check (when mode is "days")
+
 
 def debug_print(*args, **kwargs):
     """Print only if DEBUG is enabled."""
@@ -271,7 +277,7 @@ def fetch_analysis_list(session):
         all_analyses.append((name, analysis_id))
 
         # >>> FILTER ONLY "-Auto" ANALYSES <<<
-        if "-Auto" not in name:
+        if "L230 Col on 130th (dH) - Overall Chart" not in name:
             # debug_print(f"Skipping analysis (no -Auto): {analysis_id} - {name}")
             continue
 
@@ -377,19 +383,28 @@ def _create_violation_record(sensor_id, sensor_name, obs, threshold_name, min_va
     }
 
 
-def _is_within_last_n_days(timestamp_str, days=5):
+def _is_within_time_window(timestamp_str, hours=None, days=None):
     """
-    Check if a timestamp is within the last N days.
+    Check if a timestamp is within the configured time window.
+    Uses TIME_WINDOW_MODE to determine if checking hours or days.
     
     Args:
         timestamp_str: Timestamp string in various formats
-        days: Number of days to check (default: 5)
+        hours: Number of hours to check (optional, uses config if not provided)
+        days: Number of days to check (optional, uses config if not provided)
     
     Returns:
-        True if timestamp is within last N days, False otherwise
+        True if timestamp is within the time window, False otherwise
     """
     if not timestamp_str:
         return False
+    
+    # Use provided values or fall back to config
+    if hours is None and days is None:
+        if TIME_WINDOW_MODE == "hours":
+            hours = TIME_WINDOW_HOURS
+        else:
+            days = TIME_WINDOW_DAYS
     
     try:
         # Parse the timestamp string
@@ -437,8 +452,11 @@ def _is_within_last_n_days(timestamp_str, days=5):
         current_time = datetime.now(timezone.utc)
         time_diff = current_time - timestamp
         
-        # Check if within last N days
-        return time_diff <= timedelta(days=days)
+        # Check if within time window
+        if hours is not None:
+            return time_diff <= timedelta(hours=hours)
+        else:
+            return time_diff <= timedelta(days=days)
     except Exception as e:
         debug_print(f"Error parsing timestamp {timestamp_str}: {e}")
         return False
@@ -536,9 +554,9 @@ def check_threshold_violations(analysis_data, device_statuses):
         # Check each sensor's observations (only from last 5 days to avoid huge counts)
         for sensor_id, sensor_name, observations in sensors_data:
             for obs in observations:
-                # Only check observations from the last 5 days
+                # Only check observations within configured time window
                 obs_timestamp = obs.get("FormattedEndDateLocalString") or obs.get("EndDateUTC")
-                if not obs_timestamp or not _is_within_last_n_days(obs_timestamp, days=5):
+                if not obs_timestamp or not _is_within_time_window(obs_timestamp):
                     continue
                 
                 value = obs.get("ConvertedValue")
@@ -576,9 +594,9 @@ def check_threshold_violations(analysis_data, device_statuses):
                     if min_value is not None or max_value is not None:
                         for sensor_id, sensor_name, observations in sensors_data:
                             for obs in observations:
-                                # Only check observations from the last 5 days
+                                # Only check observations within configured time window
                                 obs_timestamp = obs.get("FormattedEndDateLocalString") or obs.get("EndDateUTC")
-                                if not obs_timestamp or not _is_within_last_n_days(obs_timestamp, days=5):
+                                if not obs_timestamp or not _is_within_time_window(obs_timestamp):
                                     continue
                                 
                                 value = obs.get("ConvertedValue")
@@ -1108,11 +1126,11 @@ def main():
         print(f"Error extracting chart data: {e}")
     
     # Collect all down devices and threshold violations, save in alarm format
-    # Only include alarms from the last 5 days
-    print(f"\n===== CHECKING FOR DOWN DEVICES AND THRESHOLD VIOLATIONS (LAST 5 DAYS) =====")
+    # Time window based on TIME_WINDOW_MODE configuration
+    time_window_str = f"{TIME_WINDOW_HOURS} hours" if TIME_WINDOW_MODE == "hours" else f"{TIME_WINDOW_DAYS} days"
+    print(f"\n===== CHECKING FOR DOWN DEVICES AND THRESHOLD VIOLATIONS (LAST {time_window_str.upper()}) =====")
     down_devices_alarms = []
     current_time = datetime.now(timezone.utc)
-    DAYS_THRESHOLD = 5
     
     # Collect threshold violations from all analyses
     all_threshold_violations = []
@@ -1126,9 +1144,9 @@ def main():
                 for violation in violations:
                     violation["analysis_id"] = analysis_id
                     violation["analysis_name"] = analysis_name
-                    # Only include violations from the last 5 days
+                    # Only include violations within configured time window
                     issue_time = violation.get("issue_start_time")
-                    if issue_time and _is_within_last_n_days(issue_time, days=DAYS_THRESHOLD):
+                    if issue_time and _is_within_time_window(issue_time):
                         all_threshold_violations.append(violation)
     
     # Add threshold violations to alarms
@@ -1141,14 +1159,14 @@ def main():
         analysis_name = device_status.get("analysis_name", "").strip()
         all_devices = device_status.get("devices", [])
         
-        # Filter devices that are down and within the last 5 days
+        # Filter devices that are down and within configured time window
         down_sensors = []
         for device in all_devices:
             if device.get("status") == "down":
                 issue_start_time = device.get("last_observation_time") or device.get("last_observation")
                 
-                # Only include if the device went down within the last 5 days
-                if issue_start_time and _is_within_last_n_days(issue_start_time, days=DAYS_THRESHOLD):
+                # Only include if the device went down within configured time window
+                if issue_start_time and _is_within_time_window(issue_start_time):
                     down_sensors.append(device)
         
         # Check if all sensors in this analysis are down
@@ -1210,13 +1228,15 @@ def main():
         device_down_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "device_down")
         sensor_down_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "sensor_down")
         threshold_count = sum(1 for a in down_devices_alarms if a.get("alarm_type") == "value_exceeded_threshold")
-        print(f"\nFound {device_down_count} device(s) down, {sensor_down_count} sensor(s) down, and {threshold_count} threshold violation(s) (from last {DAYS_THRESHOLD} days)")
+        time_window_str = f"{TIME_WINDOW_HOURS} hours" if TIME_WINDOW_MODE == "hours" else f"{TIME_WINDOW_DAYS} days"
+        print(f"\nFound {device_down_count} device(s) down, {sensor_down_count} sensor(s) down, and {threshold_count} threshold violation(s) (from last {time_window_str})")
     else:
         print("No down devices or threshold violations found.")
     
     # Group alarms by analysis_id (used as device_id) and combine all sensor messages in alarm_description
-    # Only includes alarms from the last 5 days
-    print(f"\n===== PROCESSING ALL ALARMS (GROUPED BY ANALYSIS_ID, LAST {DAYS_THRESHOLD} DAYS) =====")
+    # Time window based on TIME_WINDOW_MODE configuration
+    time_window_str = f"{TIME_WINDOW_HOURS} hours" if TIME_WINDOW_MODE == "hours" else f"{TIME_WINDOW_DAYS} days"
+    print(f"\n===== PROCESSING ALL ALARMS (GROUPED BY ANALYSIS_ID, LAST {time_window_str.upper()}) =====")
     try:
         # Group all alarms by: device_id (analysis_id) and alarm_type only
         # Key format: (analysis_id, alarm_type)
