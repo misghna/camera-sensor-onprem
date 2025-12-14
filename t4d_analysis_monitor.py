@@ -33,7 +33,7 @@ DEBUG = True
 # Use "hours" for production (12 hours), "days" for testing (5 days)
 TIME_WINDOW_MODE = "hours"  # Options: "hours" or "days"
 TIME_WINDOW_HOURS = 12     # Hours to check (when mode is "hours")
-TIME_WINDOW_DAYS = 5      # Days to check (when mode is "days")
+TIME_WINDOW_DAYS = 5     # Days to check (when mode is "days")
 
 
 def debug_print(*args, **kwargs):
