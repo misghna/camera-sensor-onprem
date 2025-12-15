@@ -277,7 +277,7 @@ def fetch_analysis_list(session):
         all_analyses.append((name, analysis_id))
 
         # >>> FILTER ONLY "-Auto" ANALYSES <<<
-        if "L230 Col on 130th (dH) - Overall Chart" not in name:
+        if "-Auto" not in name:
             # debug_print(f"Skipping analysis (no -Auto): {analysis_id} - {name}")
             continue
 
